@@ -1,0 +1,43 @@
+@startuml
+class PlanExchange {
+  +Result exportData(Params params)
+}
+class DataProvider {
+  +Data provideData(Params params)
+}
+class JcrDataProvider {
+  +Data provideData(Params params)
+}
+note right: Есть аналогичные\n типовые провайдеры,\n как и для SqlDataProvider 
+class SqlDataProvider {
+  +Data provideData(Params params)
+}
+class ExpendsProvider {
+  +Data provideData(Params params)
+}
+class IncomeProvider {
+  +Data provideData(Params params)
+}
+class IFDBProvider {
+  +Data provideData(Params params)
+}
+class MessageSender {
+  +Result sendMessage(Message message)
+}
+class MessageSaver {
+  +void saveMessage(Message message)
+}
+class SettingsService {
+  +Settings getSettings(Params param)
+}
+
+DataProvider -* PlanExchange 
+PlanExchange o- MessageSender
+MessageSender *-- SettingsService
+MessageSaver --* MessageSender
+JcrDataProvider --* DataProvider
+DataProvider *-- SqlDataProvider
+SqlDataProvider <|- ExpendsProvider
+SqlDataProvider <|-- IncomeProvider
+SqlDataProvider <|-- IFDBProvider
+@enduml
