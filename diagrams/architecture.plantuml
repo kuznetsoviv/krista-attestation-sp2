@@ -1,0 +1,53 @@
+@startuml architecture
+!include <C4/C4_Container>
+!include <C4/C4_Context>
+
+LAYOUT_TOP_DOWN()
+
+UpdateElementStyle(person, $fontColor="white", $bgColor="#08427B")
+UpdateElementStyle(container, $fontColor="white", $bgColor="#438DD5")
+UpdateElementStyle(containerDb, $fontColor="white", $bgColor="#2E6B9E")
+
+Person(browser, "Пользователь")
+
+System_Boundary(wildfly, "Контейнер WildFly") {
+    Container(application, "Приложение", "Java/EE")
+    Container(obas, "ОБАС", "Java/EE")
+    Container(obas_operations, "Операции ОБАС", "Kotlin")
+    Container(obas_process, "Процессы ОБАС", "Kotlin")
+    Container(paypromises, "Расходные обязательства", "Java/EE")
+    Container(paypromises_operations, "Операции РО", "Kotlin")
+    Container(paypromises_process, "Процессы РО", "Kotlin")
+    Container(dict, "Справочники", "Java/EE")
+    Container(registry, "Регистры", "Java/EE")
+}
+
+ContainerDb(postgres, "PostgreSQL", "БД")
+
+System_Ext(sys_budget, "Бюджет")
+System_Ext(sys_nsi, "НСИ")
+
+Rel(browser, application, "Запрос/ответ", "HTTP")
+Rel(application, obas, "Вызов API", "HTTP/JVM")
+Rel(application, paypromises, "Вызов API", "HTTP/JVM")
+Rel(application, dict, "Вызов API", "HTTP/JVM")
+Rel(application, registry, "Вызов API", "HTTP/JVM")
+
+Rel_Right(obas, obas_process, "Управление процессами", "JVM")
+Rel(obas, obas_operations, "Выполнение операций", "JVM")
+
+Rel(paypromises, paypromises_operations, "Управление процессами", "JVM")
+Rel(paypromises, paypromises_process, "Выполнение операций", "JVM")
+
+Rel_Right(dict, sys_nsi, "Синхронизация", "SOAP")
+Rel_Right(obas, sys_budget, "Экспорт/импорт", "HTTP")
+Lay_Down(sys_nsi, sys_budget)
+
+Rel_Down(registry, postgres, "Чтение/Запись", "JDBC")
+Rel_Down(dict, registry, "Чтение/Запись", "HTTP/JVM")
+Rel_Down(obas, postgres, "Чтение/запись документов", "JDBC")
+Rel_Down(paypromises, postgres, "Чтение/запись документов", "JDBC")
+
+Lay_Down(obas, postgres)
+
+@enduml
