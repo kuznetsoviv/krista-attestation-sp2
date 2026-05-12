@@ -1,0 +1,16 @@
+@startuml indicators
+!theme cerulean
+participant "Сервис документов" as DocumentService
+participant "Обработчик изменений" as NotificationHandler
+participant "Сервис индикаторов" as IndicatorService
+
+DocumentService -> DocumentService : Изменения данных
+DocumentService -> NotificationHandler : Уведомление
+activate NotificationHandler
+NotificationHandler -> IndicatorService : Запуск обработки
+activate IndicatorService
+IndicatorService -> IndicatorService : Обработка данных
+IndicatorService --> NotificationHandler : Обработка завершена
+deactivate IndicatorService
+deactivate NotificationHandler
+@enduml
